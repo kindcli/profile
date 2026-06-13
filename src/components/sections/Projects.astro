@@ -1,0 +1,327 @@
+---
+import { projects } from '../../data/projects';
+
+const statusLabel: Record<string, string> = {
+  shipped: 'shipped',
+  wip:     'wip',
+  oss:     'open source',
+};
+---
+
+<section id="projects" aria-label="Projects">
+  <div class="sec-inner">
+
+    <h2 class="sec-heading">Projects</h2>
+
+    <div class="proj-list">
+      {projects.map((p, i) => (
+        <article
+          class="proj-item reveal"
+          data-index={i}
+          tabindex="0"
+          role="button"
+          aria-label={`View details for ${p.name}`}
+          aria-expanded="false"
+        >
+          <div class="proj-top">
+            <span class="proj-name">{p.name}</span>
+            <span class={`proj-status proj-status--${p.status}`}>{statusLabel[p.status]}</span>
+          </div>
+          <p class="proj-summary">{p.summary}</p>
+          <div class="proj-tags">
+            {p.tags.slice(0, 5).map(t => (
+              <span class="proj-tag">{t}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<!-- Detail drawer -->
+<div
+  id="proj-drawer"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Project details"
+  aria-hidden="true"
+>
+  <div class="drawer-inner">
+    <button id="drawer-close" aria-label="Close project details">← back</button>
+    <div id="drawer-content"></div>
+  </div>
+</div>
+<div id="drawer-overlay" aria-hidden="true"></div>
+
+<script define:vars={{ projects }}>
+  const items = document.querySelectorAll('.proj-item');
+  const drawer = document.getElementById('proj-drawer');
+  const overlay = document.getElementById('drawer-overlay');
+  const closeBtn = document.getElementById('drawer-close');
+  const content = document.getElementById('drawer-content');
+
+  const statusLabel = { shipped: 'shipped', wip: 'wip', oss: 'open source' };
+
+  function open(idx) {
+    const p = projects[idx];
+    content.innerHTML = `
+      <span class="d-status d-status--${p.status}">${statusLabel[p.status]}</span>
+      <h2 class="d-name">${p.name}</h2>
+      <p class="d-detail">${p.detail}</p>
+      ${p.impact ? `<div class="d-impact"><span class="d-impact-label">impact</span><p>${p.impact}</p></div>` : ''}
+      <div class="d-stack">
+        <span class="d-stack-label">stack</span>
+        <div class="d-tags">${p.tags.map(t => `<span>${t}</span>`).join('')}</div>
+      </div>
+      ${p.github ? `<a href="${p.github}" target="_blank" rel="noopener noreferrer" class="d-gh">view on github →</a>` : ''}
+    `;
+    drawer.setAttribute('aria-hidden', 'false');
+    overlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function close() {
+    drawer.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('visible');
+    document.body.style.overflow = '';
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', () => open(Number(item.dataset.index)));
+    item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') open(Number(item.dataset.index)); });
+  });
+
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', close);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  // reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.05 });
+  document.querySelectorAll('#projects .reveal').forEach(el => io.observe(el));
+</script>
+
+<style>
+  #projects {
+    padding: 6rem max(2rem, 6vw);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .sec-heading {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--amber);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+
+  .proj-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .proj-item {
+    padding: 1.5rem 0 1.5rem 0;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    outline: none;
+    border-left: 2px solid transparent;
+    transition: border-color 0.2s, padding 0.2s;
+  }
+
+  .proj-item:hover {
+    border-left-color: var(--amber);
+    padding-left: 0.75rem;
+  }
+
+  .proj-item:last-child { border-bottom: 1px solid var(--border); }
+
+  .proj-item:hover .proj-name { color: var(--amber); }
+  .proj-item:focus-visible { outline: 1px solid var(--amber); outline-offset: 4px; }
+
+  .proj-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .proj-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.15s;
+  }
+
+  .proj-status {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .proj-status--shipped { color: #6a6; }
+  .proj-status--wip     { color: #a96; }
+  .proj-status--oss     { color: #66a; }
+
+  .proj-summary {
+    font-size: 0.82rem;
+    color: #777;
+    line-height: 1.7;
+  }
+
+  .proj-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .proj-tag {
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* Drawer */
+  #proj-drawer {
+    position: fixed;
+    inset-y: 0; right: 0;
+    z-index: 300;
+    width: min(480px, 100vw);
+    background: #0f0f0f;
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  #proj-drawer[aria-hidden="false"] { transform: translateX(0); }
+
+  .drawer-inner { padding: 2.5rem 2rem; }
+
+  #drawer-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-bottom: 2rem;
+    display: block;
+    transition: color 0.15s;
+    padding: 0;
+  }
+
+  #drawer-close:hover { color: var(--text); }
+
+  #drawer-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 290;
+    background: rgba(0,0,0,0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  #drawer-overlay.visible { opacity: 1; pointer-events: all; }
+
+  /* Drawer content styles */
+  :global(.d-status) {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+  }
+  :global(.d-status--shipped) { color: #6a6; }
+  :global(.d-status--wip)     { color: #a96; }
+  :global(.d-status--oss)     { color: #66a; }
+
+  :global(.d-name) {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  :global(.d-detail) {
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  :global(.d-impact) {
+    border-left: 2px solid var(--amber);
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  :global(.d-impact-label) {
+    font-size: 0.65rem;
+    color: var(--amber);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  :global(.d-impact p) { font-size: 0.83rem; color: #aaa; }
+
+  :global(.d-stack) { margin-bottom: 2rem; }
+
+  :global(.d-stack-label) {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+
+  :global(.d-tags) { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+  :global(.d-tags span) {
+    font-size: 0.72rem;
+    color: #888;
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  :global(.d-gh) {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    display: inline-block;
+    border-radius: 3px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  :global(.d-gh:hover) { color: var(--text); border-color: var(--amber); }
+
+  /* reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .reveal.in { opacity: 1; transform: none; }
+</style>

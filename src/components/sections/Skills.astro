@@ -1,0 +1,115 @@
+---
+import { skills } from '../../data/skills';
+---
+
+<section id="skills" aria-label="Skills and Technologies">
+  <div class="sec-inner">
+
+    <h2 class="sec-heading">Skills</h2>
+
+    <div class="skills-table">
+      {skills.map((cat) => (
+        <div class="skills-row reveal">
+          <span class="skills-cat">{cat.category}</span>
+          <p class="skills-tags">
+            {cat.skills.map((s, i) => (
+              <span>
+                {s.name}{i < cat.skills.length - 1 ? <span class="sep">,</span> : ''}
+                {' '}
+              </span>
+            ))}
+          </p>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #skills {
+    padding: 6rem max(2rem, 6vw);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .sec-heading {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--amber);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+
+  .skills-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .skills-row {
+    display: grid;
+    grid-template-columns: 14rem 1fr;
+    gap: 0 2.5rem;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--border);
+    border-left: 2px solid transparent;
+    align-items: baseline;
+    transition: background 0.15s, border-color 0.2s, padding 0.2s;
+  }
+
+  .skills-row:hover {
+    background: var(--amber-dim);
+    border-left-color: var(--amber);
+    padding-left: 0.5rem;
+  }
+  .skills-row:hover .skills-cat { color: var(--amber); }
+
+  .skills-row:last-child { border-bottom: 1px solid var(--border); }
+
+  .skills-cat {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .skills-tags {
+    font-size: 0.82rem;
+    color: #999;
+    line-height: 1.8;
+  }
+
+  .sep { color: var(--dim); }
+
+  @media (max-width: 600px) {
+    .skills-row {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e, idx) => {
+      if (e.isIntersecting) {
+        setTimeout(() => { e.target.classList.add('in'); }, idx * 40);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  document.querySelectorAll('#skills .reveal').forEach(el => io.observe(el));
+</script>

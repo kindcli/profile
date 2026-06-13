@@ -1,0 +1,111 @@
+---
+import { community } from '../../data/community';
+---
+
+<section id="community" aria-label="Community and Recognition">
+  <div class="sec-inner">
+
+    <h2 class="sec-heading">Community &amp; Recognition</h2>
+
+    <div class="comm-list">
+      {community.map((item) => (
+        <div class="comm-row reveal">
+          <span class="comm-icon" aria-hidden="true">{item.icon}</span>
+          <div class="comm-body">
+            <span class="comm-role">{item.role}</span>
+            <span class="comm-org">{item.org}</span>
+            {item.description && <p class="comm-desc">{item.description}</p>}
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #community {
+    padding: 6rem max(2rem, 6vw);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .sec-heading {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--amber);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+
+  .comm-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .comm-row {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0 1.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .comm-row:last-child { border-bottom: 1px solid var(--border); }
+
+  .comm-icon {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding-top: 0.1rem;
+  }
+
+  .comm-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .comm-role {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .comm-org {
+    font-size: 0.75rem;
+    color: var(--amber);
+  }
+
+  .comm-desc {
+    font-size: 0.8rem;
+    color: #777;
+    line-height: 1.7;
+    margin-top: 0.35rem;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 60);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('#community .reveal').forEach(el => io.observe(el));
+</script>

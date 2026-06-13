@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Sachin Raja — Senior Software Engineer',
+  description = 'Senior Software Engineer specialising in travel tech, distributed systems, platform engineering, and AI. Currently at SAP America, Inc.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Sachin Raja" />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kindcli.github.io" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Nav />
+    <main id="main-content">
+      <slot />
+    </main>
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-links">
+          <a href="https://www.linkedin.com/in/sachinraja1993/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/kindcli" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/kindcli/openevln" target="_blank" rel="noopener noreferrer">OpenEVLN</a>
+          <a href="mailto:ssachin816@gmail.com">ssachin816@gmail.com</a>
+        </div>
+        <span class="footer-copy">© 2026</span>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem max(2rem, 6vw);
+  }
+
+  .footer-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem 3rem;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
+  }
+
+  .footer-links a {
+    color: var(--muted);
+    font-size: 0.8rem;
+    transition: color 0.15s;
+  }
+
+  .footer-links a:hover { color: var(--text); }
+
+  .footer-copy {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 0.75rem;
+    opacity: 0.5;
+  }
+</style>

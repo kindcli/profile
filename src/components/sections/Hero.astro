@@ -1,0 +1,144 @@
+---
+---
+
+<section id="hero" aria-label="Introduction">
+  <div class="hero-inner">
+
+    <p class="hero-loc">Dallas–Fort Worth, TX</p>
+
+    <h1 id="hero-name" aria-label="Sachin Raja"><span id="typed-name" aria-hidden="true"></span><span class="cursor" aria-hidden="true">_</span></h1>
+
+    <p class="hero-title"><span id="scramble-title">Senior Software Engineer</span></p>
+
+    <p class="hero-desc">
+      10 years building travel infrastructure and AI systems at scale.
+      GDS integrations across Sabre, Amadeus &amp; Travelport,
+      booking pipelines for 5M+ daily users, agentic systems using MCP and A2A,
+      and platform work that ships to production at SAP America, Inc.
+    </p>
+
+    <div class="hero-links" role="list">
+      <a href="https://github.com/kindcli" target="_blank" rel="noopener noreferrer" role="listitem">gh/kindcli</a>
+      <a href="https://www.linkedin.com/in/sachinraja1993/" target="_blank" rel="noopener noreferrer" role="listitem">li/sachinraja</a>
+      <a href="mailto:ssachin816@gmail.com" role="listitem">ssachin816@gmail.com</a>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #hero {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 0 max(2rem, 6vw);
+    padding-top: 3.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-inner {
+    max-width: 52rem;
+    width: 100%;
+    margin: 0;
+    padding: 4rem 0 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .hero-loc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  h1 {
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--text);
+    min-height: 1.1em;
+  }
+
+  .cursor {
+    color: var(--amber);
+    animation: blink 1s step-end infinite;
+  }
+
+  .cursor.done { display: none; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  .hero-title {
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem;
+    color: #888;
+    line-height: 1.8;
+    max-width: 42rem;
+  }
+
+  .hero-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 2rem;
+    margin-top: 0.5rem;
+  }
+
+  .hero-links a {
+    font-size: 0.8rem;
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+
+  .hero-links a:hover { color: var(--amber); }
+</style>
+
+<script>
+  const name = 'Sachin Raja';
+  const el = document.getElementById('typed-name') as HTMLElement;
+  const cursor = document.querySelector<HTMLElement>('.cursor');
+
+  let i = 0;
+  function type() {
+    if (i <= name.length) {
+      el.textContent = name.slice(0, i);
+      i++;
+      setTimeout(type, i === 1 ? 400 : 80);
+    } else {
+      setTimeout(() => cursor?.classList.add('done'), 800);
+      // start scramble after name finishes
+      setTimeout(() => scramble(), 200);
+    }
+  }
+
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  function scramble() {
+    const titleEl = document.getElementById('scramble-title') as HTMLElement;
+    const final = 'Senior Software Engineer';
+    let frame = 0;
+    const total = 22;
+    const id = setInterval(() => {
+      titleEl.textContent = final.split('').map((ch, idx) => {
+        if (ch === ' ') return ' ';
+        if (idx < Math.floor((frame / total) * final.length)) return ch;
+        return CHARS[Math.floor(Math.random() * CHARS.length)];
+      }).join('');
+      if (++frame > total) {
+        clearInterval(id);
+        titleEl.textContent = final;
+      }
+    }, 40);
+  }
+
+  type();
+</script>

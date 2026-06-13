@@ -1,0 +1,144 @@
+---
+import { education } from '../../data/education';
+---
+
+<section id="education" aria-label="Education">
+  <div class="sec-inner">
+
+    <h2 class="sec-heading">Education</h2>
+
+    <div class="edu-list">
+      {education.map((item) => (
+        <div class="edu-row reveal">
+          <span class="edu-period">{item.period}</span>
+          <div class="edu-body">
+            <span class="edu-degree">{item.degree}</span>
+            <span class="edu-school">
+              {item.schoolUrl ? (
+                <a href={item.schoolUrl} target="_blank" rel="noopener noreferrer">{item.school}</a>
+              ) : item.school}
+              {item.affiliateName && item.affiliateUrl && (
+                <span class="edu-affiliate">
+                  &nbsp;·&nbsp;
+                  <a href={item.affiliateUrl} target="_blank" rel="noopener noreferrer">{item.affiliateName}</a>
+                </span>
+              )}
+            </span>
+            {item.location && <span class="edu-loc">{item.location}</span>}
+            {item.description && <p class="edu-desc">{item.description}</p>}
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<style>
+  #education {
+    padding: 6rem max(2rem, 6vw);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sec-inner {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .sec-heading {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--amber);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+
+  .edu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .edu-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0 2.5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .edu-row:last-child { border-bottom: 1px solid var(--border); }
+
+  .edu-period {
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+    padding-top: 0.1rem;
+  }
+
+  .edu-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .edu-degree {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .edu-school {
+    font-size: 0.8rem;
+    color: var(--amber);
+  }
+
+  .edu-school a {
+    color: inherit;
+    transition: opacity 0.15s;
+  }
+  .edu-school a:hover { opacity: 0.75; }
+
+  .edu-affiliate {
+    color: var(--muted);
+  }
+  .edu-affiliate a { color: var(--muted); }
+  .edu-affiliate a:hover { color: var(--text); }
+
+  .edu-loc {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .edu-desc {
+    font-size: 0.8rem;
+    color: #777;
+    line-height: 1.7;
+    margin-top: 0.3rem;
+  }
+
+  @media (max-width: 600px) {
+    .edu-row { grid-template-columns: 1fr; gap: 0.4rem; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 80);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('#education .reveal').forEach(el => io.observe(el));
+</script>
